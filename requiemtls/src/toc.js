@@ -7,19 +7,19 @@ function execute(url) {
   if (items && items.size() > 0) {
     for (var i = items.size() - 1; i >= 0; i--) {
       var item = items.get(i);
-      var linkEl = item.selectFirst("a[href]");
+      var linkEl = firstSelect(item, "a[href]");
       if (!linkEl) continue;
 
       var chapterUrl = absoluteUrl(linkEl.attr("href"));
       if (!chapterUrl || seen[chapterUrl]) continue;
       seen[chapterUrl] = true;
 
-      var name = textOf(item.selectFirst(".epl-title"));
+      var name = textOf(firstSelect(item, ".epl-title"));
       if (!name) {
         name = textOf(linkEl);
       }
 
-      var number = textOf(item.selectFirst(".epl-num"));
+      var number = textOf(firstSelect(item, ".epl-num"));
       if (number) {
         if (name && name.toLowerCase().indexOf(number.toLowerCase()) !== 0) {
           name = number + " - " + name;
@@ -80,6 +80,13 @@ function absoluteUrl(url) {
   return "https://requiemtls.com/" + url.replace(/^\/+/, "");
 }
 
+function firstSelect(root, selector) {
+  if (!root) return null;
+  var result = root.select(selector);
+  if (!result || result.size() === 0) return null;
+  return result.first();
+}
+
 function textOf(el) {
   if (!el) return "";
   return cleanText(el.text());
@@ -87,5 +94,8 @@ function textOf(el) {
 
 function cleanText(text) {
   if (!text) return "";
-  return String(text).replace(/\s+/g, " ").replace(/\u00a0/g, " ").trim();
+  return String(text)
+    .replace(/\s+/g, " ")
+    .replace(/\u00a0/g, " ")
+    .trim();
 }
