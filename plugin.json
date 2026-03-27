@@ -403,6 +403,17 @@
       "description": "Đọc truyện trên trang mangadex.org",
       "type": "comic",
       "locale": "global"
+    },
+    {
+      "name": "Requiem Translations",
+      "author": "vBoox",
+      "path": "https://raw.githubusercontent.com/itsmehoaq/vbook-extensions/master/requiemtls/plugin.zip",
+      "version": 1,
+      "source": "https://requiemtls.com",
+      "icon": "https://raw.githubusercontent.com/itsmehoaq/vbook-extensions/master/requiemtls/icon.png",
+      "description": "Đọc truyện trên trang Requiem Translations",
+      "type": "novel",
+      "locale": "en_US"
     }
   ]
 }
