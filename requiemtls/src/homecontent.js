@@ -202,9 +202,9 @@ function parseLinks(doc, selectors) {
 
 function cardToItem(node) {
   var linkEl =
-    node.selectFirst(".tt a[href]") ||
-    node.selectFirst("a[href].tip") ||
-    node.selectFirst("a[href]");
+    firstSelect(node, ".tt a[href]") ||
+    firstSelect(node, "a[href].tip") ||
+    firstSelect(node, "a[href]");
 
   if (!linkEl) return null;
 
@@ -212,9 +212,9 @@ function cardToItem(node) {
   if (!link || link.indexOf("/series/") < 0) return null;
 
   var name =
-    textOf(node.selectFirst(".tt")) ||
-    textOf(node.selectFirst("h2")) ||
-    textOf(node.selectFirst("h3")) ||
+    textOf(firstSelect(node, ".tt")) ||
+    textOf(firstSelect(node, "h2")) ||
+    textOf(firstSelect(node, "h3")) ||
     cleanText(linkEl.attr("title")) ||
     textOf(linkEl);
 
@@ -223,11 +223,11 @@ function cardToItem(node) {
   var cover = getImage(node);
   var description = uniqueJoin(
     [
-      textOf(node.selectFirst(".epxs")),
-      textOf(node.selectFirst(".numscore")),
-      textOf(node.selectFirst(".typez")),
-      textOf(node.selectFirst(".adds")),
-      textOf(node.selectFirst(".limit")),
+      textOf(firstSelect(node, ".epxs")),
+      textOf(firstSelect(node, ".numscore")),
+      textOf(firstSelect(node, ".typez")),
+      textOf(firstSelect(node, ".adds")),
+      textOf(firstSelect(node, ".limit")),
     ],
     " • ",
   );
@@ -241,17 +241,17 @@ function cardToItem(node) {
 }
 
 function linkItemToEntry(node) {
-  var linkEl = node.selectFirst("a[href]");
+  var linkEl = firstSelect(node, "a[href]");
   if (!linkEl) return null;
 
   var link = normalizeUrl(linkEl.attr("href"));
   if (!link || link.indexOf("/series/") < 0) return null;
 
   var name =
-    textOf(node.selectFirst("h2")) ||
-    textOf(node.selectFirst("h3")) ||
-    textOf(node.selectFirst("h4")) ||
-    textOf(node.selectFirst(".tt")) ||
+    textOf(firstSelect(node, "h2")) ||
+    textOf(firstSelect(node, "h3")) ||
+    textOf(firstSelect(node, "h4")) ||
+    textOf(firstSelect(node, ".tt")) ||
     textOf(linkEl);
 
   if (!name) return null;
@@ -259,11 +259,11 @@ function linkItemToEntry(node) {
   var cover = getImage(node);
   var description = uniqueJoin(
     [
-      textOf(node.selectFirst(".genre")),
-      textOf(node.selectFirst(".epxs")),
-      textOf(node.selectFirst(".numscore")),
-      textOf(node.selectFirst(".chapter")),
-      textOf(node.selectFirst(".adds")),
+      textOf(firstSelect(node, ".genre")),
+      textOf(firstSelect(node, ".epxs")),
+      textOf(firstSelect(node, ".numscore")),
+      textOf(firstSelect(node, ".chapter")),
+      textOf(firstSelect(node, ".adds")),
     ],
     " • ",
   );
@@ -281,9 +281,9 @@ function buildNextState(doc, state, section, hasItems) {
   if (section !== "series_updates" && section !== "new_series") return null;
 
   var nextUrl =
-    attrOf(doc.selectFirst(".pagination a.next"), "href") ||
-    attrOf(doc.selectFirst("a.next.page-numbers"), "href") ||
-    attrOf(doc.selectFirst(".nav-links a.next"), "href");
+    attrOf(firstSelect(doc, ".pagination a.next"), "href") ||
+    attrOf(firstSelect(doc, "a.next.page-numbers"), "href") ||
+    attrOf(firstSelect(doc, ".nav-links a.next"), "href");
 
   if (!nextUrl) return null;
 
@@ -296,7 +296,7 @@ function buildNextState(doc, state, section, hasItems) {
 }
 
 function getImage(node) {
-  var img = node.selectFirst("img");
+  var img = firstSelect(node, "img");
   if (!img) return "";
 
   var src =
@@ -322,6 +322,13 @@ function normalizeUrl(url) {
   if (url.charAt(0) === "/") return BASE_URL + url;
 
   return BASE_URL + "/" + url.replace(/^\/+/, "");
+}
+
+function firstSelect(root, selector) {
+  if (!root) return null;
+  var result = root.select(selector);
+  if (!result || result.size() === 0) return null;
+  return result.first();
 }
 
 function textOf(el) {
